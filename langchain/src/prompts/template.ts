@@ -12,7 +12,7 @@ export const parseFString = (template: string): ParsedFStringNode[] => {
   const chars = template.split("");
   const nodes: ParsedFStringNode[] = [];
 
-  const nextBracket = (bracket: "}" | "{" | "{}", start: number) => {
+  const nextBracket = (bracket: ")" | "(" | "()", start: number) => {
     for (let i = start; i < chars.length; i += 1) {
       if (bracket.includes(chars[i])) {
         return i;
@@ -23,20 +23,20 @@ export const parseFString = (template: string): ParsedFStringNode[] => {
 
   let i = 0;
   while (i < chars.length) {
-    if (chars[i] === "{" && i + 1 < chars.length && chars[i + 1] === "{") {
-      nodes.push({ type: "literal", text: "{" });
+    if (chars[i] === "(" && i + 1 < chars.length && chars[i + 1] === "(") {
+      nodes.push({ type: "literal", text: "(" });
       i += 2;
     } else if (
-      chars[i] === "}" &&
+      chars[i] === ")" &&
       i + 1 < chars.length &&
-      chars[i + 1] === "}"
+      chars[i + 1] === ")"
     ) {
-      nodes.push({ type: "literal", text: "}" });
+      nodes.push({ type: "literal", text: ")" });
       i += 2;
-    } else if (chars[i] === "{") {
-      const j = nextBracket("}", i);
+    } else if (chars[i] === "(") {
+      const j = nextBracket(")", i);
       if (j < 0) {
-        throw new Error("Unclosed '{' in template.");
+        throw new Error("Unclosed '(' in template.");
       }
 
       nodes.push({
@@ -44,10 +44,10 @@ export const parseFString = (template: string): ParsedFStringNode[] => {
         name: chars.slice(i + 1, j).join(""),
       });
       i = j + 1;
-    } else if (chars[i] === "}") {
-      throw new Error("Single '}' in template.");
+    } else if (chars[i] === ")") {
+      throw new Error("Single ')' in template.");
     } else {
-      const next = nextBracket("{}", i);
+      const next = nextBracket("()", i);
       const text = (next < 0 ? chars.slice(i) : chars.slice(i, next)).join("");
       nodes.push({ type: "literal", text });
       i = next < 0 ? chars.length : next;
