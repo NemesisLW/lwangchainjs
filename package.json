@@ -1,7 +1,7 @@
 {
   "name": "@arghyad/lwangchainjs",
-  "version": "0.0.4",
-  "private": true,
+  "version": "0.0.1",
+  "private": false,
   "engines": {
     "node": ">=18"
   },
